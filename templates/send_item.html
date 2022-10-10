@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{%load bootstrap5 %}
+
+
+{%block content%}
+    <form method='POST' style="margin: 50px" class="w-25">
+        {% csrf_token %}
+        {% bootstrap_form form  %}
+        <button type="submit" class="btn btn-primary">
+            Создать отправление
+        </button>
+    </form>
+{%endblock content%}

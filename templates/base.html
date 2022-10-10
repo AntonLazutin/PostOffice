@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>PostOffice</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{%url 'index'%}">PyPost</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{%url 'index'%}">Главная</a>
+            </li>
+            {%if user.is_authenticated%}
+            <li class="nav-item">
+              <a class="nav-link" href=""> Выйти</a>
+            </li>
+            {%else%}
+            <li class="nav-item">
+              <a class="nav-link" href="{%url 'login'%}">Войти в аккаунт</a>
+            </li>
+            {%endif%}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'send' %}">Отправить</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{%url 'about'%}">Информация о проекте</a>
+            </li>
+          </ul>
+          <form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search" />
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Искать</button>
+          </form>
+        </div>
+      </nav>
+    <div class="content">
+    </div>
+    {% block content %}
+    {% endblock content %}
+    <script src=""></script>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+
+  </body>
+</html>

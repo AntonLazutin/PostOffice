@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{%block content%}
+    {%for item in items%}
+        <div class="row" style="margin: 50px;">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Подпись: {{item.name}}</h5>
+                  <p class="card-text">{{item}}</p>
+                  <a href="{%url 'detail' item.id%}" class="btn btn-primary">More detail</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {%endfor%}
+{%endblock content%}
