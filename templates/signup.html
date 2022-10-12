@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content%}
+<div class='row justify-content-center'>
+    <form method='POST'>
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-primary">
+            Регистрация
+        </button>   
+        <button class="btn btn-primary" style="margin-left: 60px;">Войти в существующий аккаунт</button>
+    </form>
+</div>
+{% endblock content%}

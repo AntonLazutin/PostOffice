@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
-
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout   , authenticate
 from django.contrib.auth.models import User
-
+from django.http.response import HttpResponseRedirect
+from django.urls import reverse
 from .models import *
-from .forms import LoginForm, PostalItemForm
+from .forms import LoginForm, PostalItemForm, SignUpForm
 
 
 def index(request):
@@ -32,20 +32,16 @@ def send_item(request):
     return render(request, 'send_item.html', {'form': form})
 
 
-def sign_up_view(request):
-    pass
-
-
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = request.get('username')
-            password = request.get('password')
-            user = authenticate(username, password)
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)
-                redirect('index')
+                return HttpResponseRedirect(reverse('index'))
             else:
                 HttpResponse('Invalid account')
                 #redirect('invalid_acc') TODO
@@ -54,9 +50,23 @@ def login_view(request):
     return render(request, 'login_page.html', {'form': form})
 
 
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            redirect('login')
+        else:
+            print(form.errors)
+            HttpResponse('Invalid form')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+
 def logout_view(request):
-    logout(request.user)
-    redirect('index')
+    logout(request)
+    return HttpResponseRedirect(reverse('index'))
 
 
 def detail_view(request, pk):
@@ -65,3 +75,4 @@ def detail_view(request, pk):
     except PostalItem.DoesNotExist as ex:
         raise Http404('Not found')
     return render(request, 'detail.html', {'item': item})
+
