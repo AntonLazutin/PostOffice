@@ -3,33 +3,32 @@ from django.http import HttpResponse, Http404
 from django.contrib.auth import login, logout   , authenticate
 from django.contrib.auth.models import User
 from django.http.response import HttpResponseRedirect
+from django.views.generic import TemplateView, ListView, FormView, View
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import *
-from .forms import LoginForm, PostalItemForm, SignUpForm
+from .forms import *
 
 
-def index(request):
-    try:
-        items = PostalItem.objects.all()
-    except PostalItem.DoesNotExist:
-        items = None
-    #return HttpResponse("<h1>Hello, world!</h1>")
-    return render(request, 'index.html', context={'items': items})
+
+class IndexView(ListView):
+    model = PostalItem
+    context_object_name = 'items'
+    template_name = 'index.html'
 
 
-def about_page(request):
-    return render(request, 'about.html')
+class AboutPageView(TemplateView):
+    template_name = "about.html"
 
 
-def send_item(request):
-    if request.method == 'POST':
-        form = PostalItemForm(request.POST)
-        if form.is_valid():
-            form.save()
-            redirect('index')
-    else:
-        form = PostalItemForm()
-    return render(request, 'send_item.html', {'form': form})
+class SendItemView(FormView):
+    template_name = 'send_item.html'
+    form_class = PostalItemForm
+    success_url = ''
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 def login_view(request):
@@ -50,23 +49,33 @@ def login_view(request):
     return render(request, 'login_page.html', {'form': form})
 
 
-def signup_view(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            redirect('login')
-        else:
-            print(form.errors)
-            HttpResponse('Invalid form')
-    else:
-        form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+class LoginView(View):
+    
+    def get(self, *args, **kwargs):
+        pass
+
+    def post(self, *args, **kwargs):
+        pass
+    
+
+
+class SignUpView(FormView):
+    template_name = 'signup.html'
+    form_class = SignUpForm
+    success_url = ''
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
+
+
+class PostalItemDetail():
+    pass
 
 
 def detail_view(request, pk):

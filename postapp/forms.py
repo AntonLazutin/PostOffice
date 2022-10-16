@@ -18,7 +18,7 @@ class LoginForm(forms.Form):
 
 
 class SignUpForm(UserCreationForm):
-    email = forms.CharField(required=True, max_length=20)
+    email = forms.CharField(required=True, max_length=50)
 
     class Meta:
         model = User
@@ -30,4 +30,11 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class CustomerForm(forms.ModelForm):
+
+    class Meta:
+        model = Customer
+        exclude = ('id', 'user')
 

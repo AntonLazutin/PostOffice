@@ -1,9 +1,5 @@
-from email.policy import default
-from pyexpat import model
-from secrets import choice
-from statistics import mode
-from turtle import ondrag
 from django.db import models
+from django.contrib.auth.models import User
 
 CHOICES = (
     ("LT", "Letter"),
@@ -18,6 +14,7 @@ class Employee(models.Model):
 
 class Customer(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
+    user = models.ForeignKey(User, related_name="customers", on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     adress = models.CharField(max_length=50)
