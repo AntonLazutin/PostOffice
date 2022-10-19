@@ -9,7 +9,7 @@ class PostalItemForm(forms.ModelForm):
     
     class Meta:
         model = PostalItem
-        exclude = ('id', 'departure_date')
+        exclude = ('id', 'departure_date', 'sender')
 
 
 class LoginForm(forms.Form):

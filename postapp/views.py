@@ -1,14 +1,16 @@
+from cmath import log
+from urllib import request
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
-from django.contrib.auth import login, logout   , authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect
 from django.views.generic import TemplateView, ListView, FormView, View
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import *
 from .forms import *
-
 
 
 class IndexView(ListView):
@@ -27,7 +29,21 @@ class SendItemView(FormView):
     success_url = ''
 
     def form_valid(self, form):
-        form.save()
+        item = form.save(commit=False)
+        item.sender = Customer.objects.filter(user=request.user)
+        item.save()
+        return super().form_valid(form)
+
+
+class AddCustomer(FormView):
+    template_name = 'become_a_customer.html'
+    form_class = CustomerForm
+    success_url = 'send'
+
+    def form_valid(self, form):
+        customer = form.save(commit=False)
+        customer.user = request.user
+        customer.save()
         return super().form_valid(form)
 
 
