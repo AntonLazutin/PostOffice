@@ -3,9 +3,9 @@
 
 {%block content%}
   {% if user.is_authenticated %}
-    <h1>Hello, {{user.username}}!</h1>>
+    <h1>Hello, {{user.username}}!</h1>
   {% endif%}
-  {% if items == None %}
+  {% if items %}
     {%for item in items%}
         <div class="row" style="margin: 50px;">
             <div class="col-sm-6">

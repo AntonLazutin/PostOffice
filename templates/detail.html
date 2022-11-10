@@ -3,6 +3,20 @@
 
 {%block content%}
     <div class='row justify-content-center'>
-        <p>{{item}}</p> 
+        <div class="grid">
+            <div class="row">
+                <p>{{item.name}}</p>
+            </div>
+            <div class="row">
+                <p>from: {{item.sender}}</p>
+                <p>to: {{item.receiver}}</p>
+            </div>
+            <div class="row">
+                <p>type: {{item.get_type_display}}</p>
+            </div>
+            <div class="row">
+                <p>date: {{item.departure_date}}</p>
+            </div>
+        </div>
     </div>
 {%endblock content%}

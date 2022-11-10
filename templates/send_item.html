@@ -4,7 +4,7 @@
 
 {%block content%}
     <div class='row justify-content-center'>
-        {% if user.is_authenticated %}
+        {% if customer %}
         <form method='POST' style="margin: 50px" class="w-25">
             {% csrf_token %}
             {% bootstrap_form form  %}
@@ -18,7 +18,7 @@
                 <p class="lead">Отправка возможна только клиентами почтового сервиса</p>
             </div>
             <div class="row">
-                <a href="{% url 'join' %}" class="btn btn-primary" style="">Стать клиентом</a>
+                <a href="{% url 'join' %}" class="btn btn-primary">Стать клиентом</a>
             </div>
         </div>
         {% endif %}

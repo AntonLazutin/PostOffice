@@ -1,6 +1,4 @@
-from cmath import log
-from urllib import request
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
@@ -28,9 +26,18 @@ class SendItemView(FormView):
     form_class = PostalItemForm
     success_url = ''
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(SendItemView, self).get_context_data(*args, **kwargs)
+        try:
+            print(Customer.objects.filter(user=self.request.user))      
+            context['customer'] = Customer.objects.filter(user=self.request.user)
+        except Customer.DoesNotExist:
+            context['customer'] = None
+        return context
+
     def form_valid(self, form):
         item = form.save(commit=False)
-        item.sender = Customer.objects.filter(user=request.user)
+        item.sender = Customer.objects.get(user=self.request.user)
         item.save()
         return super().form_valid(form)
 
@@ -42,14 +49,21 @@ class AddCustomer(FormView):
 
     def form_valid(self, form):
         customer = form.save(commit=False)
-        customer.user = request.user
+        customer.user = self.request.user
         customer.save()
         return super().form_valid(form)
 
 
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
+class LoginView(View):
+    form_class = LoginForm
+    template_name = 'login_page.html'
+    
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -59,45 +73,29 @@ def login_view(request):
                 return HttpResponseRedirect(reverse('index'))
             else:
                 HttpResponse('Invalid account')
-                #redirect('invalid_acc') TODO
-    else:
-        form = LoginForm()
-    return render(request, 'login_page.html', {'form': form})
-
-
-class LoginView(View):
+        return render(request, self.template_name, {'form': form})
     
-    def get(self, *args, **kwargs):
-        pass
-
-    def post(self, *args, **kwargs):
-        pass
-    
-
 
 class SignUpView(FormView):
     template_name = 'signup.html'
     form_class = SignUpForm
-    success_url = ''
+    success_url = 'index'
 
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
 
 
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('index'))
+class LogoutView(View):
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return HttpResponseRedirect(reverse('index'))
 
 
-class PostalItemDetail():
-    pass
-
-
-def detail_view(request, pk):
-    try:
-        item = PostalItem.objects.get(id=pk)
-    except PostalItem.DoesNotExist as ex:
-        raise Http404('Not found')
-    return render(request, 'detail.html', {'item': item})
-
+class PostalItemDetail(View):
+    template_name = 'detail.html'
+    
+    def get(self, request, pk, *args, **kwargs):
+        return render(request, self.template_name, 
+        {'item': get_object_or_404(PostalItem, pk=pk)})
